@@ -36,17 +36,6 @@ def load_inventory():
     df = df.fillna("")
     df.columns = df.columns.astype(str).str.strip().str.lower()
 
-    rename_map = {}
-    for col in df.columns:
-        if col == "base price":
-            rename_map[col] = "price"
-        elif col == "product status code":
-            rename_map[col] = "availability"
-        elif col == "status":
-            rename_map[col] = "availability"
-
-    df = df.rename(columns=rename_map)
-
     expected = [c for c in ["sku", "product", "price", "availability"] if c in df.columns]
     df = df[expected].copy()
 
@@ -76,16 +65,18 @@ def load_knowledge():
         return ""
 
 
-def is_inventory_question(user_query: str) -> bool:
-    query = user_query.lower()
+def is_inventory_question(user_query: str, history_text: str = "") -> bool:
+    combined = f"{history_text} {user_query}".lower()
+
     inventory_keywords = [
         "wine", "wines", "price", "available", "availability", "in stock",
         "recommend", "sweet", "red", "white", "sparkling", "rose", "rosé",
         "moscato", "cabernet", "chardonnay", "merlot", "pinot", "malbec",
         "cheap", "cheapest", "expensive", "most expensive", "under", "below",
-        "above", "cost", "bottle", "buy", "purchase"
+        "above", "cost", "bottle", "buy", "purchase", "premium", "option",
+        "more", "yes please", "tell me more"
     ]
-    return any(keyword in query for keyword in inventory_keywords)
+    return any(keyword in combined for keyword in inventory_keywords)
 
 
 def infer_flags(df: pd.DataFrame):
@@ -175,6 +166,13 @@ def search_inventory(user_query: str, df: pd.DataFrame, max_results: int = 5):
     if "rose" in query or "rosé" in query or "rosato" in query:
         working_df = working_df[working_df["is_rose"]].copy()
 
+    if "premium" in query:
+        working_df = working_df.sort_values(by="price_num", ascending=False, na_position="last")
+        return working_df.head(max_results).drop(
+            columns=["price_num", "is_sweet", "is_red", "is_white", "is_sparkling", "is_rose"],
+            errors="ignore"
+        ).to_dict(orient="records")
+
     if "product" in working_df.columns:
         products = working_df["product"].astype(str).str.lower()
         direct = working_df[products.str.contains(re.escape(query), na=False)]
@@ -192,7 +190,7 @@ def search_inventory(user_query: str, df: pd.DataFrame, max_results: int = 5):
             "available", "sweet", "red", "white", "sparkling", "brut",
             "rose", "rosé", "rosato", "recommend", "show", "me", "what",
             "is", "your", "most", "least", "highest", "lowest", "price",
-            "cost", "buy", "purchase"
+            "cost", "buy", "purchase", "yes", "please"
         }
     ]
 
@@ -277,13 +275,25 @@ def chat():
     try:
         data = request.get_json(silent=True) or {}
         user_message = str(data.get("message", "")).strip()
+        history = data.get("history", [])
 
         if not user_message:
             return jsonify({"error": "Message is required."}), 400
 
-        if is_inventory_question(user_message):
+        history_text = " ".join(
+            str(msg.get("content", ""))
+            for msg in history
+            if isinstance(msg, dict)
+        )
+
+        if is_inventory_question(user_message, history_text):
             df = load_inventory()
-            matches = search_inventory(user_message, df)
+
+            effective_query = user_message
+            if user_message.lower() in ["yes", "yes please", "tell me more", "more", "what else"]:
+                effective_query = history_text + " premium recommendations"
+
+            matches = search_inventory(effective_query, df)
             retrieved_context = build_inventory_context(matches)
 
             system_prompt = f"""
@@ -296,6 +306,9 @@ Use only these public-safe availability labels:
 - Available
 - Limited availability
 - Not available
+
+If the user gives a short follow-up like "yes please" or "tell me more",
+use the conversation history to continue the prior recommendation naturally.
 
 If appropriate, recommend 2 to 4 matching wines.
 Keep answers concise and professional.
@@ -313,18 +326,27 @@ You are a PRP Wine assistant.
 
 Answer only using the PRP information below.
 If the answer is not present, say you do not have that information available.
+If the user gives a short follow-up, use the conversation history when relevant.
 Keep answers concise, clear, and professional.
 
 Retrieved PRP information:
 {retrieved_context}
 """
 
+        messages = [{"role": "system", "content": system_prompt}]
+
+        for msg in history[-6:]:
+            if isinstance(msg, dict):
+                role = msg.get("role")
+                content = str(msg.get("content", "")).strip()
+                if role in ["user", "assistant"] and content:
+                    messages.append({"role": role, "content": content})
+
+        messages.append({"role": "user", "content": user_message})
+
         response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
+            messages=messages,
             temperature=0.2
         )
 
