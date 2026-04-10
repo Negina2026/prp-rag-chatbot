@@ -36,6 +36,17 @@ def load_inventory():
     df = df.fillna("")
     df.columns = df.columns.astype(str).str.strip().str.lower()
 
+    rename_map = {}
+    for col in df.columns:
+        if col == "base price":
+            rename_map[col] = "price"
+        elif col == "product status code":
+            rename_map[col] = "availability"
+        elif col == "status":
+            rename_map[col] = "availability"
+
+    df = df.rename(columns=rename_map)
+
     expected = [c for c in ["sku", "product", "price", "availability"] if c in df.columns]
     df = df[expected].copy()
 
@@ -236,7 +247,7 @@ def build_inventory_context(records):
 
 def search_knowledge(user_query: str, knowledge_text: str, max_chunks: int = 3):
     if not knowledge_text.strip():
-        return "No general PRP information is available."
+        return ""
 
     paragraphs = [p.strip() for p in knowledge_text.split("\n\n") if p.strip()]
     query_words = [w.lower() for w in re.findall(r"[a-zA-Z']+", user_query) if len(w) > 2]
@@ -245,15 +256,12 @@ def search_knowledge(user_query: str, knowledge_text: str, max_chunks: int = 3):
     for para in paragraphs:
         para_lower = para.lower()
         score = sum(1 for word in query_words if word in para_lower)
-        if score > 0:
-            scored.append((score, para))
+        scored.append((score, para))
 
     scored.sort(key=lambda x: x[0], reverse=True)
 
-    if not scored:
-        return "No matching general information found."
-
-    return "\n\n".join(chunk for _, chunk in scored[:max_chunks])
+    top_chunks = [chunk for _, chunk in scored[:max_chunks] if chunk.strip()]
+    return "\n\n".join(top_chunks)
 
 
 @app.route("/", methods=["GET"])
@@ -286,6 +294,12 @@ def chat():
             if isinstance(msg, dict)
         )
 
+        knowledge_text = load_knowledge()
+        knowledge_context = search_knowledge(
+            f"{history_text} {user_message}".strip(),
+            knowledge_text
+        )
+
         if is_inventory_question(user_message, history_text):
             df = load_inventory()
 
@@ -294,43 +308,54 @@ def chat():
                 effective_query = history_text + " premium recommendations"
 
             matches = search_inventory(effective_query, df)
-            retrieved_context = build_inventory_context(matches)
+            inventory_context = build_inventory_context(matches)
 
             system_prompt = f"""
 You are a PRP Wine assistant.
 
-Answer only using the retrieved inventory below.
-Do not make up product names, prices, or availability.
-Never reveal internal stock counts or exact quantities.
-Use only these public-safe availability labels:
-- Available
-- Limited availability
-- Not available
+Use the retrieved inventory as the primary source for product names, prices, and availability.
+Use the PRP knowledge base as supporting background information when helpful.
 
-If the user gives a short follow-up like "yes please" or "tell me more",
-use the conversation history to continue the prior recommendation naturally.
-
-If appropriate, recommend 2 to 4 matching wines.
-Keep answers concise and professional.
+Rules:
+- Do not make up product names, prices, or availability.
+- Never reveal internal stock counts or exact quantities.
+- Use only these public-safe availability labels:
+  - Available
+  - Limited availability
+  - Not available
+- If the user gives a short follow-up like "yes please" or "tell me more",
+  use the conversation history to continue naturally.
+- If appropriate, recommend 2 to 4 matching wines.
+- Keep answers concise and professional.
+- If the knowledge base is weak, you may give a brief helpful general answer, but do not present it as a confirmed PRP-specific fact.
 
 Retrieved inventory:
-{retrieved_context}
+{inventory_context}
+
+Retrieved PRP knowledge:
+{knowledge_context}
 """
         else:
-            knowledge_text = load_knowledge()
             matches = []
-            retrieved_context = search_knowledge(user_message, knowledge_text)
-
             system_prompt = f"""
 You are a PRP Wine assistant.
 
-Answer only using the PRP information below.
-If the answer is not present, say you do not have that information available.
-If the user gives a short follow-up, use the conversation history when relevant.
-Keep answers concise, clear, and professional.
+Use the retrieved PRP knowledge below as your primary source.
 
-Retrieved PRP information:
-{retrieved_context}
+Rules:
+- If the answer is clearly supported by the PRP knowledge, answer confidently.
+- If the exact answer is not directly stated in the PRP knowledge, give a brief helpful response based on general knowledge, but do NOT present it as a confirmed PRP-specific fact.
+- When using general knowledge, make that clear with wording like:
+  - "Generally..."
+  - "In many cases..."
+  - "Based on typical wine service practices..."
+- Do not invent PRP policies, guarantees, pricing, or operational details that are not in the knowledge base.
+- Keep answers concise, natural, and helpful.
+- Avoid replying only with "I do not have that information available."
+- If helpful, guide the user back to PRP’s known offerings such as exclusive wines, in-home tastings, virtual tastings, and personalized experiences.
+
+Retrieved PRP knowledge:
+{knowledge_context}
 """
 
         messages = [{"role": "system", "content": system_prompt}]
