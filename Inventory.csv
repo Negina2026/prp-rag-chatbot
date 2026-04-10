@@ -1,52 +1,59 @@
-sku,product,price,available,status
-CUHXXD,XO Cognac Grand Champagne,132.99,458,Current
-ECNXXD,Deepwood Cellars Covey of Quail,33.99,594,Current
-ECW21D,Deepwood Cellars Charbono,48.99,618,Current
-EDG20D,Golden Grape Alexander Valley Cabernet Sauvignon 2020,91.99,8,Stopped
-EDH22D,Golden Grape Estate Paso Robles Cabernet Sauvignon,47.99,15,Stopped
-EDP22D,Deepwood Cellars Monterey Pinot Noir,40.99,1039,Current
-EII23D,Deepwood Cellars Monterey Chardonnay,35.99,1350,Current
-EIUXXD,Deepwood Cellars Condo of Condors,29.99,359,Remnant
-IBM22D,Montepulciano d'Abruzzo,62.99,4768,Current
-IDI20D,Ad Maiora Super Tuscan 2020,99.99,961,Current
-IMI23D,Piccolomini Ribolla Gialla,34.99,949,Current
-IMS21D,La Storia d'Amore Moscato 2021,27.99,460,Current
-IPY22D,Capo dei Capi,54.99,1769,Current
-ITH23D,Freisa d'Asti,36.99,2592,Current
-ITK23D,Sardegna Cannonau,37.99,103,Remnant
-ITL19D,Macchianova Vino Nobile Di Montepulciano,39.99,1291,Current
-ITR15D,Ambrogini Vino Nobile di Montepulciano 2015,66.99,137,Current
-ITU21D,Nittardi Augustus 2021,84.99,2371,Current
-ITZ19D,Barolo di Barolo,97.99,1078,Current
-JBK22D,Casa Nueva Family Reserva Pinot Noir,39.99,2243,Current
-JCC24D,Hidden Cove Sauvignon Blanc,35.99,1132,Current
-JIN23D,Casa Nueva Chardonnay,35.99,1641,Current
-JLLXXD,Framboise Raspberry Sparkling,31.99,3122,Current
-JLPXXD,Peche,30.99,1415,Current
-JNVXXD,Viloso Tawny Port,41.99,413,Current
-JPB24D,Piccolomini Vallagarina Rosato,31.99,833,Current
-JPC23D,Rhodanos,30.99,1240,Current
-JPIXXD,Pineau Des Charentes White,47.99,260,Current
-JPJ24D,Jumilla,29.99,1451,Current
-JPM23D,Montano Real Malbec Reserva,32.99,420,Current
-JPRXXD,Pineau Des Charentes Rose,47.99,1495,Current
-JPU17D,La Almunieta,49.99,1665,Current
-JRB24D,Chevalier de Bayard,28.99,5941,Current
-JTC24D,Travicello,31.99,53,Current
-JTGXXD,Golden Tango Cream,40.99,13995,Current
-JTJ23D,La Encina,54.99,490,Current
-PBE24D,Rheingau Kabinett,32.99,1313,Current
-PBO22D,Pieroth Estate Orange Wine 2022,47.99,441,Current
-PBU23D,Burg Layer Schlosskapelle Spatlese,34.99,2774,Current
-PDB23D,Cape Root Cabernet Sauvignon,28.99,2971,Current
-PDE23D,Cape Root Pinotage 2023,33.99,1571,Current
-PDX18B,Bretz Cold Harvest Beerenauslese 2018,69.99,1546,Current
-PED18B,Rheinhessen Dornfelder Eiswein 2018,52.99,109,Current
-PEO23B,Westhofener Rotenstein Beerenauslese,46.99,625,Current
-PFH24D,Murdei,34.99,441,Current
-PKK24D,Brauneberger Kurfurstlay Mosel Kabinett,31.99,1982,Current
-PLBXXD,Pieroth Blue Demi Sec,33.99,791,Current
-PLR22D,Pieroth Estate Pinot Reserve Brut 2022,56.99,106,Current
-PMCXXD,Meisters Cuvee Sekt Mild,30.99,532,Current
-PWIDD1,Diadema Super Tuscan Swarovski Edition,99.99,107,Current
-PWM23D,Detzemer St. Michael Spatlese,32.99,1590,Current
+sku,product,price,availability
+CUHXXD,XO Cognac Grand Champagne,132.99,Available
+ECNXXD,Deepwood Cellars Covey of Quail,33.99,Available
+ECW21D,Deepwood Cellars Charbono,48.99,Available
+EDG20D,Golden Grape Alexander Valley Cabernet Sauvignon 2020,91.99,Not available
+EDH22D,Golden Grape Estate Paso Robles Cabernet Sauvignon,47.99,Not available
+EDP22D,Deepwood Cellars Monterey Pinot Noir,40.99,Available
+EII23D,Deepwood Cellars Monterey Chardonnay,35.99,Available
+EIUXXD,Deepwood Cellars Condo of Condors,29.99,Limited availability
+IBM22D,Montepulciano d'Abruzzo,62.99,Available
+IDI20D,Ad Maiora Super Tuscan 2020,99.99,Available
+IMI23D,Piccolomini Ribolla Gialla,34.99,Available
+IMS21D,La Storia d'Amore Moscato 2021,27.99,Available
+IPY22D,Capo dei Capi,54.99,Available
+ITH23D,Freisa d'Asti,36.99,Available
+ITK23D,Sardegna Cannonau,37.99,Limited availability
+ITL19D,Macchianova Vino Nobile Di Montepulciano,39.99,Available
+ITO19D,Primo di Stato 2019,84.99,Not available
+ITR15D,Ambrogini Vino Nobile di Montepulciano 2015,66.99,Available
+ITU21D,Nittardi Augustus 2021,84.99,Available
+ITZ19D,Barolo di Barolo,97.99,Available
+JBK22D,Casa Nueva Family Reserva Pinot Noir,39.99,Available
+JBU22D,Emocion 2022,99.99,Not available
+JCC24D,Hidden Cove Sauvignon Blanc,35.99,Available
+JCE25D,Cape Root Chenin Blanc,29.99,Limited availability
+JCH23D,Chateau de la Chaume,85.99,Available
+JCK22D,Clos de Roques,41.99,Limited availability
+JDC23D,Duca d'Amalfi,28.99,Available
+JII24D,Romanet Chardonnay,32.99,Available
+JIN23D,Casa Nueva Chardonnay,35.99,Available
+JLLXXD,Framboise Raspberry Sparkling,31.99,Available
+JLPXXD,Peche,30.99,Available
+JMO20D,Chateau Les Religieusis De Larcis Jaumat 2020,78.99,Available
+JNVXXD,Viloso Tawny Port,41.99,Available
+JPB24D,Piccolomini Vallagarina Rosato,31.99,Available
+JPC23D,Rhodanos,30.99,Available
+JPIXXD,Pineau Des Charentes - White,47.99,Available
+JPJ24D,Jumilla,29.99,Available
+JPM23D,Montano Real Malbec Reserva,32.99,Available
+JPRXXD,Pineau Des Charentes - Rose,47.99,Available
+JPU17D,La Almunieta,49.99,Available
+JRB24D,Chevalier de Bayard,28.99,Available
+JTC24D,Travicello,31.99,Available
+JTGXXD,Golden Tango Cream,40.99,Available
+JTJ23D,La Encina,54.99,Available
+PBE24D,Rheingau Kabinett,32.99,Available
+PBO22D,Pieroth Estate Orange Wine 2022,47.99,Available
+PBU23D,Burg Layer Schlosskapelle Spatlese,34.99,Available
+PDB23D,Cape Root Cabernet Sauvignon,28.99,Available
+PDE23D,Cape Root Pinotage 2023,33.99,Available
+PDX18B,Bretz Cold Harvest Beerenauslese 2018,69.99,Available
+PED18B,Rheinhessen Dornfelder Eiswein 2018,52.99,Available
+PEO23B,Westhofener Rotenstein Beerenauslese,46.99,Available
+PFH24D,Murdei,34.99,Available
+PKK24D,Brauneberger Kurfurstlay Mosel Kabinett,31.99,Available
+PLBXXD,Pieroth Blue Demi Sec,33.99,Available
+PLR22D,Pieroth Estate Pinot Reserve Brut 2022,56.99,Available
+PMCXXD,Meisters Cuvee Sekt Mild,30.99,Available
+PWM23D,Detzemer St. Michael Spatlese,32.99,Available
